@@ -1,4 +1,11 @@
 asgiref==3.3.4
+autopep8==1.5.6
 Django==3.2
+django-admin-filtrate==0.1.0
+django-admin-rangefilter==0.7.0
+django-daterangefilter==1.0.0
+django-jazzmin==2.4.5
+pycodestyle==2.7.0
 pytz==2021.1
 sqlparse==0.4.1
+toml==0.10.2
