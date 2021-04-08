@@ -3,6 +3,7 @@ from django.contrib.auth.models import (
     AbstractUser, AbstractBaseUser, BaseUserManager, PermissionsMixin
 )
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 import re
 
 CHOICES = (
@@ -18,17 +19,25 @@ def one_month_hence():
 
 
 class MyUserManager(BaseUserManager):
+
+    def check_phone_number(self, phone_number, *args, **kwargs):
+        phone_number = self.phone_number
+        if not phone_number:
+            raise ValidationError({
+                'phone_number':
+                'Users must have a phone number'}
+            )
+
+        pattern = r'^(\+(01|1|977))?\d{7}(\d{3})?$'
+        if not re.search(pattern,phone_number):
+            raise ValidationError(
+                {'phone_number': 'Enter a valid phone number'})
+
     def create_user(self, name, phone_number, created_at, updated_at, expires_at, *args, **kwargs):
         """
         Creates and saves a User
         """
-        print(phone_number)
-        if not phone_number:
-            raise ValueError('Users must have a phone number')
-
-        pattern = r'^(\+(01|1|977))?\d{7}(\d{3})?$'
-        if not re.search(pattern.phone_number):
-            raise ValueError('Enter a valid phone number')
+        self.check_phone_number(phone_number)
         password = kwargs.pop('password', None)
         user = self.model(
             phone_number=phone_number,
@@ -81,7 +90,6 @@ class User(AbstractUser):
     updated_at = models.DateTimeField('Renewed Date', default=timezone.now)
     expires_at = models.DateTimeField('Expiry Date', default=one_month_hence)
 
-
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['membership_type', ]
     objects = MyUserManager()
@@ -97,6 +105,28 @@ class User(AbstractUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+
+    def clean(self):
+
+        phone_number = self.phone_number
+        if not phone_number:
+            raise ValidationError({
+                'phone_number':
+                'Users must have a phone number'}
+            )
+
+        pattern = r'^(\+(01|1|977))?\d{7}(\d{3})?$'
+        if not re.search(pattern,phone_number):
+            raise ValidationError(
+                {'phone_number': 'Enter a valid phone number'})
+
+    def save(self, *args, **kwargs):
+
+     
+        if not self.is_superuser:
+            self.clean()
+
+        super().save(*args, **kwargs)
 
 
 class MembershipType(models.Model):
