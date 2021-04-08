@@ -134,7 +134,6 @@ AUTH_USER_MODEL = 'gym_management.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": "Gym Management System",
@@ -170,6 +169,12 @@ JAZZMIN_SETTINGS = {
         {
             "model": "gym_management.Invoice",
         },
+        {
+            "name": "Show Stats",
+            "url": "gym_management:stats_view",
+            "new_window": True
+        },
+
     ],
     "search_model": "gym_management.User",
 
@@ -182,11 +187,7 @@ JAZZMIN_SETTINGS = {
     # User Menu #
     #############
 
-    # Additional links to include in the user menu on the top right ("app" url type is not allowed)
-    "usermenu_links": [
 
-        {"model": "gym_management.user"}
-    ],
 
     #############
     # Side Menu #
@@ -217,7 +218,15 @@ JAZZMIN_SETTINGS = {
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
+    "custom_links": {
+        "gym_management": [{
+            "name": "Show Stats",
+            "url": "gym_management:stats_view",
+            "icon": "fas fa-chart-line",
+            'permissions':['gym_management.view_user']
 
+        }, ]
+    },
     #################
     # Related Modal #
     #################
@@ -244,4 +253,9 @@ JAZZMIN_SETTINGS = {
     # - carousel
     "changeform_format": "horizontal_tabs",
 
+}
+
+JAZZMIN_UI_TWEAKS = {
+
+    "theme": "spacelab",
 }
