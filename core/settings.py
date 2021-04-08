@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'gym_management',
 
     'daterangefilter',
+    'django_tables2',
+ 
+
+    "django_ajax_tables",
 
 ]
 

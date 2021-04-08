@@ -1,0 +1,20 @@
+{%extends 'stats/base.html'%}
+
+
+{%block content %}
+<main>
+    {% block information%}
+
+    {% endblock %}
+
+    {% if table %}
+    {%block table%}
+    {% endblock %}
+
+    {%endif %}
+
+
+
+</main>
+
+{% endblock %}
