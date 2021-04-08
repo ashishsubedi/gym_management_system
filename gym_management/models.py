@@ -22,6 +22,7 @@ class MyUserManager(BaseUserManager):
         """
         Creates and saves a User
         """
+        print(phone_number)
         if not phone_number:
             raise ValueError('Users must have a phone number')
 
