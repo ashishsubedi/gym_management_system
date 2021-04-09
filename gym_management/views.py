@@ -21,7 +21,7 @@ from django_tables2.export.views import ExportMixin
 
 
 from .models import User, Invoice, MembershipType
-from .tables import MemberTable
+from .tables import MemberTable, InvoiceTable
 
 
 
@@ -119,9 +119,38 @@ def members_table_view(request, member_type=None):
         exporter = TableExport(export_format, table)
         return exporter.response("table.{}".format(export_format))
 
+   
     context = {
         "table": table,
+        "table_name": member_type
     }
     for key,val in MEMBERS_MAP.items():
         context[key] = val
     return render(request, "stats/tables.html", context)
+
+
+@staff_member_required
+def invoice_table_view(request, phone_number=None):
+    print(phone_number)
+    member = Invoice.objects.filter(user__phone_number=phone_number).order_by('-date')
+
+    table = InvoiceTable(member)
+    RequestConfig(request).configure(table)
+
+
+    limit = request.GET.get('limit', 20)
+    table.paginate(page=request.GET.get("page", 1),
+                   per_page=limit if limit < 500 else 500)
+
+
+    export_format = request.GET.get("_export", None)
+    if TableExport.is_valid_format(export_format):
+        exporter = TableExport(export_format, table)
+        return exporter.response("table.{}".format(export_format))
+    table_name = 'Invoice Table'
+    context = {
+        "table": table,
+        "table_name": table_name
+    }
+
+    return render(request, "stats/invoices.html", context)

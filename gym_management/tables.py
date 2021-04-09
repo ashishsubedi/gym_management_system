@@ -10,3 +10,12 @@ class MemberTable(tables.Table):
         }
         fields = ("first_name",'last_name','phone_number','membership_type','membership_status','created_at','updated_at','expires_at' )
 
+class InvoiceTable(tables.Table):
+    class Meta:
+        model = Invoice
+        template_name = "django_tables2/bootstrap4.html"
+        attrs = {
+            'class':'table table-bordered',
+        }
+        fields = ("date",'user','amount' )
+
